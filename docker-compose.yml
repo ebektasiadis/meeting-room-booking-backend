@@ -1,0 +1,15 @@
+services:
+  pgsql:
+    image: postgres:17.5-alpine
+    container_name: pgsql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bookings_app
+    volumes:
+      - pgsql_data:/var/lib/postgresql
+
+volumes:
+  pgsql_data:
