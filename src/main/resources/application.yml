@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: meeting-room-booking
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookings_app
+    username: user
+    password: password
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: false
+    hibernate:
+      ddl-auto: create
+logging:
+  level:
+    root: info
