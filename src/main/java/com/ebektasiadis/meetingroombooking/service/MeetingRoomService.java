@@ -5,8 +5,10 @@ import com.ebektasiadis.meetingroombooking.dto.MeetingRoomResponse;
 import com.ebektasiadis.meetingroombooking.exception.meetingroom.MeetingRoomNameExistsException;
 import com.ebektasiadis.meetingroombooking.exception.meetingroom.MeetingRoomNotFoundException;
 
+import java.util.List;
+
 public interface MeetingRoomService {
-    Iterable<MeetingRoomResponse> getAllMeetingRooms();
+    List<MeetingRoomResponse> getAllMeetingRooms();
 
     MeetingRoomResponse getMeetingRoomById(Long id) throws MeetingRoomNotFoundException;
 

@@ -11,6 +11,7 @@ import com.ebektasiadis.meetingroombooking.service.MeetingRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +24,7 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
     }
 
     @Override
-    public Iterable<MeetingRoomResponse> getAllMeetingRooms() {
+    public List<MeetingRoomResponse> getAllMeetingRooms() {
         return meetingRoomRepository.findAll().stream().map(MeetingRoomMapper::toResponse).collect(Collectors.toList());
     }
 

@@ -37,7 +37,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Iterable<BookingResponse> getAllBookings() {
+    public List<BookingResponse> getAllBookings() {
         return bookingRepository.findAll().stream().map(BookingMapper::toResponse).collect(Collectors.toList());
     }
 
