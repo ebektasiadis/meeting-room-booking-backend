@@ -12,6 +12,7 @@ import com.ebektasiadis.meetingroombooking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +25,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Iterable<UserResponse> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(UserMapper::toResponse).collect(Collectors.toList());
     }
 
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(UserRequest userRequest) throws UserEmailExistsException {
+    public UserResponse createUser(UserRequest userRequest) throws UserEmailExistsException, UserUsernameExistsException {
         User user = UserMapper.toEntity(userRequest);
 
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {

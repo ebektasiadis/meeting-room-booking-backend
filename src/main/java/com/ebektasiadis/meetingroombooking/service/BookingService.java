@@ -8,9 +8,11 @@ import com.ebektasiadis.meetingroombooking.exception.booking.BookingNotFoundExce
 import com.ebektasiadis.meetingroombooking.exception.meetingroom.MeetingRoomNotFoundException;
 import com.ebektasiadis.meetingroombooking.exception.user.UserNotFoundException;
 
+import java.util.List;
+
 
 public interface BookingService {
-    Iterable<BookingResponse> getAllBookings();
+    List<BookingResponse> getAllBookings();
 
     BookingResponse getBookingById(Long id) throws BookingNotFoundException;
 
