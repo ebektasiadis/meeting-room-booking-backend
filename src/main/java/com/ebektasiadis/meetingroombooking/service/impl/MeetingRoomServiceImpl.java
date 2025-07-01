@@ -54,10 +54,11 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
         MeetingRoom meetingRoom = MeetingRoomMapper.toEntity(meetingRoomRequest);
         MeetingRoom existingMeetingRoom = meetingRoomRepository.findById(id)
                 .orElseThrow(() -> new MeetingRoomNotFoundException(id));
-
-
-        if (meetingRoomRepository.findByName(existingMeetingRoom.getName()).isPresent()) {
-            throw new MeetingRoomNameExistsException(existingMeetingRoom.getName());
+        
+        if (!existingMeetingRoom.getName().equals(meetingRoom.getName())) {
+            if (meetingRoomRepository.findByName(meetingRoom.getName()).isPresent()) {
+                throw new MeetingRoomNameExistsException(meetingRoom.getName());
+            }
         }
 
         existingMeetingRoom.setName(meetingRoom.getName());
