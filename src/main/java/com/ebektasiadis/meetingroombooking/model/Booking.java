@@ -22,13 +22,11 @@ public class Booking {
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
     @Column(name = "purpose", nullable = false)
     private String purpose;
-
 
     @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
