@@ -2,9 +2,7 @@ package com.ebektasiadis.meetingroombooking.service.impl;
 
 import com.ebektasiadis.meetingroombooking.dto.BookingRequest;
 import com.ebektasiadis.meetingroombooking.dto.BookingResponse;
-import com.ebektasiadis.meetingroombooking.exception.booking.BookingDateConflictException;
-import com.ebektasiadis.meetingroombooking.exception.booking.BookingInvalidDateException;
-import com.ebektasiadis.meetingroombooking.exception.booking.BookingNotFoundException;
+import com.ebektasiadis.meetingroombooking.exception.booking.*;
 import com.ebektasiadis.meetingroombooking.exception.meetingroom.MeetingRoomNotFoundException;
 import com.ebektasiadis.meetingroombooking.exception.user.UserNotFoundException;
 import com.ebektasiadis.meetingroombooking.mapper.BookingMapper;
@@ -15,26 +13,22 @@ import com.ebektasiadis.meetingroombooking.repository.BookingRepository;
 import com.ebektasiadis.meetingroombooking.repository.MeetingRoomRepository;
 import com.ebektasiadis.meetingroombooking.repository.UserRepository;
 import com.ebektasiadis.meetingroombooking.service.BookingService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final MeetingRoomRepository meetingRoomRepository;
-
-    @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository, UserRepository userRepository, MeetingRoomRepository meetingRoomRepository) {
-        this.bookingRepository = bookingRepository;
-        this.userRepository = userRepository;
-        this.meetingRoomRepository = meetingRoomRepository;
-    }
+    private final Clock clock;
 
     @Override
     public List<BookingResponse> getAllBookings() {
@@ -49,13 +43,12 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toResponse(booking);
     }
 
-    private void validateAndPrepareBooking(Booking booking) throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingDateConflictException {
+    private void validateAndPrepareBooking(Booking booking) throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingPastStartDateException, BookingPastEndDateException, BookingDateConflictException {
         validateAndPrepareBooking(booking, null);
     }
 
     private void validateAndPrepareBooking(Booking booking, Long bookingIdToExclude)
-            throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingDateConflictException {
-
+            throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingPastStartDateException, BookingPastEndDateException, BookingDateConflictException {
 
         Long userId = booking.getBookedBy().getId();
         User bookedBy = userRepository.findById(userId)
@@ -71,6 +64,14 @@ public class BookingServiceImpl implements BookingService {
 
         LocalDateTime startTime = booking.getStartTime();
         LocalDateTime endTime = booking.getEndTime();
+
+        if (startTime.isBefore(LocalDateTime.now(clock))) {
+            throw new BookingPastStartDateException(startTime);
+        }
+
+        if (endTime.isBefore(LocalDateTime.now(clock))) {
+            throw new BookingPastEndDateException(endTime);
+        }
 
         if (startTime.isAfter(endTime) || startTime.isEqual(endTime)) {
             throw new BookingInvalidDateException(startTime, endTime);
@@ -93,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponse createBooking(BookingRequest bookingRequest) throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingDateConflictException {
+    public BookingResponse createBooking(BookingRequest bookingRequest) throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingPastStartDateException, BookingPastEndDateException, BookingDateConflictException {
         Booking booking = BookingMapper.toEntity(bookingRequest);
 
         validateAndPrepareBooking(booking);
@@ -104,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingResponse updateBooking(Long id, BookingRequest bookingRequest) throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingDateConflictException {
+    public BookingResponse updateBooking(Long id, BookingRequest bookingRequest) throws BookingNotFoundException, UserNotFoundException, MeetingRoomNotFoundException, BookingInvalidDateException, BookingPastStartDateException, BookingPastEndDateException, BookingDateConflictException {
         Booking booking = BookingMapper.toEntity(bookingRequest);
 
         Booking existingBooking = bookingRepository.findById(id)
