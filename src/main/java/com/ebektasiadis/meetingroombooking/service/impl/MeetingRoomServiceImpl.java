@@ -8,20 +8,16 @@ import com.ebektasiadis.meetingroombooking.mapper.MeetingRoomMapper;
 import com.ebektasiadis.meetingroombooking.model.MeetingRoom;
 import com.ebektasiadis.meetingroombooking.repository.MeetingRoomRepository;
 import com.ebektasiadis.meetingroombooking.service.MeetingRoomService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MeetingRoomServiceImpl implements MeetingRoomService {
     final private MeetingRoomRepository meetingRoomRepository;
-
-    @Autowired
-    public MeetingRoomServiceImpl(MeetingRoomRepository meetingRoomRepository) {
-        this.meetingRoomRepository = meetingRoomRepository;
-    }
 
     @Override
     public List<MeetingRoomResponse> getAllMeetingRooms() {
@@ -54,7 +50,7 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
         MeetingRoom meetingRoom = MeetingRoomMapper.toEntity(meetingRoomRequest);
         MeetingRoom existingMeetingRoom = meetingRoomRepository.findById(id)
                 .orElseThrow(() -> new MeetingRoomNotFoundException(id));
-        
+
         if (!existingMeetingRoom.getName().equals(meetingRoom.getName())) {
             if (meetingRoomRepository.findByName(meetingRoom.getName()).isPresent()) {
                 throw new MeetingRoomNameExistsException(meetingRoom.getName());

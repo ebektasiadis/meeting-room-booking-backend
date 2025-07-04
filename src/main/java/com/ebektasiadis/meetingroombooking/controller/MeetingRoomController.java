@@ -4,7 +4,7 @@ import com.ebektasiadis.meetingroombooking.dto.MeetingRoomRequest;
 import com.ebektasiadis.meetingroombooking.dto.MeetingRoomResponse;
 import com.ebektasiadis.meetingroombooking.service.MeetingRoomService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -13,14 +13,10 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/meeting-rooms")
+@RequiredArgsConstructor
 public class MeetingRoomController {
 
     private final MeetingRoomService meetingRoomService;
-
-    @Autowired
-    public MeetingRoomController(MeetingRoomService meetingRoomService) {
-        this.meetingRoomService = meetingRoomService;
-    }
 
     @GetMapping
     public ResponseEntity<Iterable<MeetingRoomResponse>> getAllMeetingRooms() {
