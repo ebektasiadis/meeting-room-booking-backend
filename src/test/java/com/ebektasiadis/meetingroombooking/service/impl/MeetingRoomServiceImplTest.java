@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ebektasiadis.meetingroombooking.testutil.MeetingRoomTestBuilder.aMeetingRoom;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,21 +42,23 @@ public class MeetingRoomServiceImplTest {
     void setUp() {
         nonExistingMeetingRoomId = 999L;
 
-        meetingRoomFirst = new MeetingRoom();
-        meetingRoomFirst.setId(1L);
-        meetingRoomFirst.setName("Meeting Room 1");
-        meetingRoomFirst.setCapacity(5);
-        meetingRoomFirst.setLocation("Thessaloniki, Greece");
-        meetingRoomFirst.setHasProjector(true);
-        meetingRoomFirst.setHasWhiteboard(true);
+        meetingRoomFirst = aMeetingRoom()
+                .withId(1L)
+                .withName("Meeting Room 1")
+                .withCapacity(5)
+                .withLocation("Thessaloniki, Greece")
+                .withHasProjector(true)
+                .withHasWhiteboard(true)
+                .build();
 
-        meetingRoomSecond = new MeetingRoom();
-        meetingRoomSecond.setId(2L);
-        meetingRoomSecond.setName("Meeting Room 2");
-        meetingRoomSecond.setCapacity(8);
-        meetingRoomSecond.setLocation("Athens, Greece");
-        meetingRoomSecond.setHasProjector(true);
-        meetingRoomSecond.setHasWhiteboard(false);
+        meetingRoomSecond = aMeetingRoom()
+                .withId(2L)
+                .withName("Meeting Room 2")
+                .withCapacity(8)
+                .withLocation("Athens, Greece")
+                .withHasProjector(true)
+                .withHasWhiteboard(false)
+                .build();
     }
 
     @Nested
@@ -137,14 +140,22 @@ public class MeetingRoomServiceImplTest {
         @DisplayName("should create meeting room")
         void createMeetingRoom_returnsMeetingRoom() {
             MeetingRoomRequest meetingRoomRequest = new MeetingRoomRequest("Meeting Room 3", 6, "Larisa, Greece", true, true);
+            MeetingRoom createdRoom = aMeetingRoom()
+                    .withId(3L)
+                    .withName("Meeting Room 3")
+                    .withCapacity(6)
+                    .withLocation("Larisa, Greece")
+                    .withHasProjector(true)
+                    .withHasWhiteboard(true)
+                    .build();
 
             when(meetingRoomRepository.findByName(meetingRoomRequest.name())).thenReturn(Optional.empty());
-            when(meetingRoomRepository.save(any(MeetingRoom.class))).thenReturn(meetingRoomFirst);
+            when(meetingRoomRepository.save(any(MeetingRoom.class))).thenReturn(createdRoom);
 
             MeetingRoomResponse meetingRoomResponse = meetingRoomService.createMeetingRoom(meetingRoomRequest);
 
             assertThat(meetingRoomResponse).isNotNull();
-            assertThat(meetingRoomResponse.id()).isEqualTo(meetingRoomFirst.getId());
+            assertThat(meetingRoomResponse.id()).isEqualTo(createdRoom.getId());
             assertThat(meetingRoomResponse.name()).isEqualTo(meetingRoomRequest.name());
             assertThat(meetingRoomResponse.capacity()).isEqualTo(meetingRoomRequest.capacity());
             assertThat(meetingRoomResponse.location()).isEqualTo(meetingRoomRequest.location());
@@ -211,13 +222,14 @@ public class MeetingRoomServiceImplTest {
         @DisplayName("should return updated meeting room when name remains the same")
         void updateMeetingRoom_existingMeetingRoomSameName_returnUpdatedMeetingRoom() {
             MeetingRoomRequest meetingRoomRequest = new MeetingRoomRequest(meetingRoomFirst.getName(), 6, "Larisa, Greece", true, true);
-            MeetingRoom updatedMeetingRoom = new MeetingRoom();
-            updatedMeetingRoom.setId(meetingRoomFirst.getId());
-            updatedMeetingRoom.setName(meetingRoomRequest.name());
-            updatedMeetingRoom.setCapacity(meetingRoomRequest.capacity());
-            updatedMeetingRoom.setLocation(meetingRoomRequest.location());
-            updatedMeetingRoom.setHasProjector(meetingRoomRequest.hasProjector());
-            updatedMeetingRoom.setHasWhiteboard(meetingRoomRequest.hasWhiteboard());
+            MeetingRoom updatedMeetingRoom = aMeetingRoom()
+                    .withId(meetingRoomFirst.getId())
+                    .withName(meetingRoomRequest.name())
+                    .withCapacity(meetingRoomRequest.capacity())
+                    .withLocation(meetingRoomRequest.location())
+                    .withHasProjector(meetingRoomRequest.hasProjector())
+                    .withHasWhiteboard(meetingRoomRequest.hasWhiteboard())
+                    .build();
 
             when(meetingRoomRepository.findById(meetingRoomFirst.getId())).thenReturn(Optional.of(meetingRoomFirst));
             when(meetingRoomRepository.save(any(MeetingRoom.class))).thenReturn(updatedMeetingRoom);
@@ -241,13 +253,14 @@ public class MeetingRoomServiceImplTest {
         @DisplayName("should return updated meeting room")
         void updateMeetingRoom_existingMeetingRoom_returnUpdatedMeetingRoom() {
             MeetingRoomRequest meetingRoomRequest = new MeetingRoomRequest("Meeting Room 3", 6, "Larisa, Greece", true, true);
-            MeetingRoom updatedMeetingRoom = new MeetingRoom();
-            updatedMeetingRoom.setId(meetingRoomFirst.getId());
-            updatedMeetingRoom.setName(meetingRoomRequest.name());
-            updatedMeetingRoom.setCapacity(meetingRoomRequest.capacity());
-            updatedMeetingRoom.setLocation(meetingRoomRequest.location());
-            updatedMeetingRoom.setHasProjector(meetingRoomRequest.hasProjector());
-            updatedMeetingRoom.setHasWhiteboard(meetingRoomRequest.hasWhiteboard());
+            MeetingRoom updatedMeetingRoom = aMeetingRoom()
+                    .withId(meetingRoomFirst.getId())
+                    .withName(meetingRoomRequest.name())
+                    .withCapacity(meetingRoomRequest.capacity())
+                    .withLocation(meetingRoomRequest.location())
+                    .withHasProjector(meetingRoomRequest.hasProjector())
+                    .withHasWhiteboard(meetingRoomRequest.hasWhiteboard())
+                    .build();
 
             when(meetingRoomRepository.findById(meetingRoomFirst.getId())).thenReturn(Optional.of(meetingRoomFirst));
             when(meetingRoomRepository.findByName(updatedMeetingRoom.getName())).thenReturn(Optional.empty());
