@@ -69,8 +69,8 @@ public class UserServiceImplTest {
 
             assertThatNoException().isThrownBy(() -> userService.deleteUser(userJohnDoe.getId()));
 
-            verify(userRepository, times(1)).findById(userJohnDoe.getId());
-            verify(userRepository, times(1)).deleteById(userJohnDoe.getId());
+            verify(userRepository).findById(userJohnDoe.getId());
+            verify(userRepository).deleteById(userJohnDoe.getId());
         }
 
         @Test
@@ -83,8 +83,8 @@ public class UserServiceImplTest {
                     .extracting("userId")
                     .isEqualTo(nonExistingUserId);
 
-            verify(userRepository, times(1)).findById(nonExistingUserId);
-            verify(userRepository, times(0)).deleteById(userJohnDoe.getId());
+            verify(userRepository).findById(nonExistingUserId);
+            verify(userRepository, never()).deleteById(userJohnDoe.getId());
         }
     }
 
@@ -102,7 +102,7 @@ public class UserServiceImplTest {
                     .extracting("userId")
                     .isEqualTo(nonExistingUserId);
 
-            verify(userRepository, times(1)).findById(nonExistingUserId);
+            verify(userRepository).findById(nonExistingUserId);
         }
 
         @Test
@@ -118,10 +118,10 @@ public class UserServiceImplTest {
                     .extracting("userUsername")
                     .isEqualTo(userMarySmith.getUsername());
 
-            verify(userRepository, times(1)).findById(userJohnDoe.getId());
-            verify(userRepository, times(0)).findByEmail(userRequest.email());
-            verify(userRepository, times(1)).findByUsername(userRequest.username());
-            verify(userRepository, times(0)).save(any(User.class));
+            verify(userRepository).findById(userJohnDoe.getId());
+            verify(userRepository, never()).findByEmail(userRequest.email());
+            verify(userRepository).findByUsername(userRequest.username());
+            verify(userRepository, never()).save(any(User.class));
         }
 
         @Test
@@ -137,10 +137,10 @@ public class UserServiceImplTest {
                     .extracting("userEmail")
                     .isEqualTo(userMarySmith.getEmail());
 
-            verify(userRepository, times(1)).findById(userJohnDoe.getId());
-            verify(userRepository, times(1)).findByEmail(userRequest.email());
-            verify(userRepository, times(0)).findByUsername(userRequest.username());
-            verify(userRepository, times(0)).save(any(User.class));
+            verify(userRepository).findById(userJohnDoe.getId());
+            verify(userRepository).findByEmail(userRequest.email());
+            verify(userRepository, never()).findByUsername(userRequest.username());
+            verify(userRepository, never()).save(any(User.class));
         }
 
         @Test
@@ -162,13 +162,15 @@ public class UserServiceImplTest {
 
             assertThat(userResponse).isNotNull();
             assertThat(userResponse.id()).isEqualTo(userJohnDoe.getId());
-            assertThat(userResponse.username()).isEqualTo(userRequest.username());
-            assertThat(userResponse.email()).isEqualTo(userRequest.email());
+            assertThat(userResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("username", "email")
+                    .isEqualTo(userRequest);
 
-            verify(userRepository, times(1)).findById(userJohnDoe.getId());
-            verify(userRepository, times(1)).findByUsername(userRequest.username());
-            verify(userRepository, times(1)).findByEmail(userRequest.email());
-            verify(userRepository, times(1)).save(any(User.class));
+            verify(userRepository).findById(userJohnDoe.getId());
+            verify(userRepository).findByUsername(userRequest.username());
+            verify(userRepository).findByEmail(userRequest.email());
+            verify(userRepository).save(any(User.class));
         }
 
         @Test
@@ -189,13 +191,15 @@ public class UserServiceImplTest {
 
             assertThat(userResponse).isNotNull();
             assertThat(userResponse.id()).isEqualTo(userJohnDoe.getId());
-            assertThat(userResponse.username()).isEqualTo(userRequest.username());
-            assertThat(userResponse.email()).isEqualTo(userRequest.email());
+            assertThat(userResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("username", "email")
+                    .isEqualTo(userRequest);
 
-            verify(userRepository, times(1)).findById(userJohnDoe.getId());
-            verify(userRepository, times(0)).findByUsername(userRequest.username());
-            verify(userRepository, times(1)).findByEmail(userRequest.email());
-            verify(userRepository, times(1)).save(any(User.class));
+            verify(userRepository).findById(userJohnDoe.getId());
+            verify(userRepository, never()).findByUsername(userRequest.username());
+            verify(userRepository).findByEmail(userRequest.email());
+            verify(userRepository).save(any(User.class));
         }
 
         @Test
@@ -216,13 +220,15 @@ public class UserServiceImplTest {
 
             assertThat(userResponse).isNotNull();
             assertThat(userResponse.id()).isEqualTo(userJohnDoe.getId());
-            assertThat(userResponse.username()).isEqualTo(userRequest.username());
-            assertThat(userResponse.email()).isEqualTo(userRequest.email());
+            assertThat(userResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("username", "email")
+                    .isEqualTo(userRequest);
 
-            verify(userRepository, times(1)).findById(userJohnDoe.getId());
-            verify(userRepository, times(1)).findByUsername(userRequest.username());
-            verify(userRepository, times(0)).findByEmail(userRequest.email());
-            verify(userRepository, times(1)).save(any(User.class));
+            verify(userRepository).findById(userJohnDoe.getId());
+            verify(userRepository).findByUsername(userRequest.username());
+            verify(userRepository, never()).findByEmail(userRequest.email());
+            verify(userRepository).save(any(User.class));
         }
     }
 
@@ -242,13 +248,14 @@ public class UserServiceImplTest {
             UserResponse userResponse = userService.createUser(userRequest);
 
             assertThat(userResponse).isNotNull();
-            assertThat(userResponse.id()).isEqualTo(userJohnDoe.getId());
-            assertThat(userResponse.username()).isEqualTo(userJohnDoe.getUsername());
-            assertThat(userResponse.email()).isEqualTo(userJohnDoe.getEmail());
+            assertThat(userResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("id", "username", "email")
+                    .isEqualTo(userJohnDoe);
 
-            verify(userRepository, times(1)).save(any(User.class));
-            verify(userRepository, times(1)).findByUsername(userRequest.username());
-            verify(userRepository, times(1)).findByEmail(userRequest.email());
+            verify(userRepository).save(any(User.class));
+            verify(userRepository).findByUsername(userRequest.username());
+            verify(userRepository).findByEmail(userRequest.email());
         }
 
         @Test
@@ -264,9 +271,9 @@ public class UserServiceImplTest {
                     .extracting("userUsername")
                     .isEqualTo(userRequest.username());
 
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(1)).findByUsername(userRequest.username());
-            verify(userRepository, times(1)).findByEmail(userRequest.email());
+            verify(userRepository, never()).save(any(User.class));
+            verify(userRepository).findByUsername(userRequest.username());
+            verify(userRepository).findByEmail(userRequest.email());
         }
 
         @Test
@@ -281,9 +288,9 @@ public class UserServiceImplTest {
                     .extracting("userEmail")
                     .isEqualTo(userRequest.email());
 
-            verify(userRepository, times(0)).save(any(User.class));
-            verify(userRepository, times(0)).findByUsername(userRequest.username());
-            verify(userRepository, times(1)).findByEmail(userRequest.email());
+            verify(userRepository, never()).save(any(User.class));
+            verify(userRepository, never()).findByUsername(userRequest.username());
+            verify(userRepository).findByEmail(userRequest.email());
         }
     }
 
@@ -334,9 +341,10 @@ public class UserServiceImplTest {
             UserResponse userResponse = userService.getUserById(userJohnDoe.getId());
 
             assertThat(userResponse).isNotNull();
-            assertThat(userResponse.id()).isEqualTo(userJohnDoe.getId());
-            assertThat(userResponse.username()).isEqualTo(userJohnDoe.getUsername());
-            assertThat(userResponse.email()).isEqualTo(userJohnDoe.getEmail());
+            assertThat(userResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("id", "username", "email")
+                    .isEqualTo(userJohnDoe);
 
             verify(userRepository, times((1))).findById(userJohnDoe.getId());
         }

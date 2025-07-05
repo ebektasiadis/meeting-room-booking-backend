@@ -72,14 +72,12 @@ public class MeetingRoomServiceImplTest {
             MeetingRoomResponse meetingRoomResponse = meetingRoomService.getMeetingRoomById(meetingRoomFirst.getId());
 
             assertThat(meetingRoomResponse).isNotNull();
-            assertThat(meetingRoomResponse.id()).isEqualTo(meetingRoomFirst.getId());
-            assertThat(meetingRoomResponse.name()).isEqualTo(meetingRoomFirst.getName());
-            assertThat(meetingRoomResponse.capacity()).isEqualTo(meetingRoomFirst.getCapacity());
-            assertThat(meetingRoomResponse.location()).isEqualTo(meetingRoomFirst.getLocation());
-            assertThat(meetingRoomResponse.hasProjector()).isEqualTo(meetingRoomFirst.getHasProjector());
-            assertThat(meetingRoomResponse.hasWhiteboard()).isEqualTo(meetingRoomFirst.getHasWhiteboard());
+            assertThat(meetingRoomResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("id", "name", "capacity", "location", "hasProjector", "hasWhiteboard")
+                    .isEqualTo(meetingRoomFirst);
 
-            verify(meetingRoomRepository, times(1)).findById(meetingRoomFirst.getId());
+            verify(meetingRoomRepository).findById(meetingRoomFirst.getId());
         }
 
         @Test
@@ -92,7 +90,7 @@ public class MeetingRoomServiceImplTest {
                     .extracting("meetingRoomId")
                     .isEqualTo(nonExistingMeetingRoomId);
 
-            verify(meetingRoomRepository, times(1)).findById(nonExistingMeetingRoomId);
+            verify(meetingRoomRepository).findById(nonExistingMeetingRoomId);
         }
     }
 
@@ -115,7 +113,7 @@ public class MeetingRoomServiceImplTest {
                     .contains(tuple(meetingRoomFirst.getId(), meetingRoomFirst.getName()))
                     .contains(tuple(meetingRoomSecond.getId(), meetingRoomSecond.getName()));
 
-            verify(meetingRoomRepository, times(1)).findAll();
+            verify(meetingRoomRepository).findAll();
         }
 
         @Test
@@ -128,7 +126,7 @@ public class MeetingRoomServiceImplTest {
             assertThat(meetingRoomResponses).isNotNull();
             assertThat(meetingRoomResponses.size()).isEqualTo(0);
 
-            verify(meetingRoomRepository, times(1)).findAll();
+            verify(meetingRoomRepository).findAll();
         }
     }
 
@@ -156,14 +154,13 @@ public class MeetingRoomServiceImplTest {
 
             assertThat(meetingRoomResponse).isNotNull();
             assertThat(meetingRoomResponse.id()).isEqualTo(createdRoom.getId());
-            assertThat(meetingRoomResponse.name()).isEqualTo(meetingRoomRequest.name());
-            assertThat(meetingRoomResponse.capacity()).isEqualTo(meetingRoomRequest.capacity());
-            assertThat(meetingRoomResponse.location()).isEqualTo(meetingRoomRequest.location());
-            assertThat(meetingRoomResponse.hasProjector()).isEqualTo(meetingRoomRequest.hasProjector());
-            assertThat(meetingRoomResponse.hasWhiteboard()).isEqualTo(meetingRoomRequest.hasWhiteboard());
+            assertThat(meetingRoomResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("name", "capacity", "location", "hasProjector", "hasWhiteboard")
+                    .isEqualTo(meetingRoomRequest);
 
-            verify(meetingRoomRepository, times(1)).findByName(meetingRoomRequest.name());
-            verify(meetingRoomRepository, times(1)).save(any(MeetingRoom.class));
+            verify(meetingRoomRepository).findByName(meetingRoomRequest.name());
+            verify(meetingRoomRepository).save(any(MeetingRoom.class));
         }
 
         @Test
@@ -178,7 +175,7 @@ public class MeetingRoomServiceImplTest {
                     .extracting("meetingRoomName")
                     .isEqualTo(meetingRoomRequest.name());
 
-            verify(meetingRoomRepository, times(1)).findByName(meetingRoomFirst.getName());
+            verify(meetingRoomRepository).findByName(meetingRoomFirst.getName());
             verify(meetingRoomRepository, never()).save(any(MeetingRoom.class));
         }
     }
@@ -196,7 +193,7 @@ public class MeetingRoomServiceImplTest {
                     .extracting("meetingRoomId")
                     .isEqualTo(nonExistingMeetingRoomId);
 
-            verify(meetingRoomRepository, times(1)).findById(nonExistingMeetingRoomId);
+            verify(meetingRoomRepository).findById(nonExistingMeetingRoomId);
             verify(meetingRoomRepository, never()).save(any(MeetingRoom.class));
         }
 
@@ -213,8 +210,8 @@ public class MeetingRoomServiceImplTest {
                     .extracting("meetingRoomName")
                     .isEqualTo(meetingRoomSecond.getName());
 
-            verify(meetingRoomRepository, times(1)).findById(meetingRoomFirst.getId());
-            verify(meetingRoomRepository, times(1)).findByName(meetingRoomSecond.getName());
+            verify(meetingRoomRepository).findById(meetingRoomFirst.getId());
+            verify(meetingRoomRepository).findByName(meetingRoomSecond.getName());
             verify(meetingRoomRepository, never()).save(any(MeetingRoom.class));
         }
 
@@ -238,15 +235,14 @@ public class MeetingRoomServiceImplTest {
 
             assertThat(meetingRoomResponse).isNotNull();
             assertThat(meetingRoomResponse.id()).isEqualTo(meetingRoomFirst.getId());
-            assertThat(meetingRoomResponse.name()).isEqualTo(meetingRoomRequest.name());
-            assertThat(meetingRoomResponse.capacity()).isEqualTo(meetingRoomRequest.capacity());
-            assertThat(meetingRoomResponse.location()).isEqualTo(meetingRoomRequest.location());
-            assertThat(meetingRoomResponse.hasProjector()).isEqualTo(meetingRoomRequest.hasProjector());
-            assertThat(meetingRoomResponse.hasWhiteboard()).isEqualTo(meetingRoomRequest.hasWhiteboard());
+            assertThat(meetingRoomResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("name", "capacity", "location", "hasProjector", "hasWhiteboard")
+                    .isEqualTo(meetingRoomRequest);
 
-            verify(meetingRoomRepository, times(1)).findById(meetingRoomFirst.getId());
+            verify(meetingRoomRepository).findById(meetingRoomFirst.getId());
             verify(meetingRoomRepository, never()).findByName(meetingRoomRequest.name());
-            verify(meetingRoomRepository, times(1)).save(any(MeetingRoom.class));
+            verify(meetingRoomRepository).save(any(MeetingRoom.class));
         }
 
         @Test
@@ -270,15 +266,14 @@ public class MeetingRoomServiceImplTest {
 
             assertThat(meetingRoomResponse).isNotNull();
             assertThat(meetingRoomResponse.id()).isEqualTo(meetingRoomFirst.getId());
-            assertThat(meetingRoomResponse.name()).isEqualTo(meetingRoomRequest.name());
-            assertThat(meetingRoomResponse.capacity()).isEqualTo(meetingRoomRequest.capacity());
-            assertThat(meetingRoomResponse.location()).isEqualTo(meetingRoomRequest.location());
-            assertThat(meetingRoomResponse.hasProjector()).isEqualTo(meetingRoomRequest.hasProjector());
-            assertThat(meetingRoomResponse.hasWhiteboard()).isEqualTo(meetingRoomRequest.hasWhiteboard());
+            assertThat(meetingRoomResponse)
+                    .usingRecursiveComparison()
+                    .comparingOnlyFields("name", "capacity", "location", "hasProjector", "hasWhiteboard")
+                    .isEqualTo(meetingRoomRequest);
 
-            verify(meetingRoomRepository, times(1)).findById(meetingRoomFirst.getId());
-            verify(meetingRoomRepository, times(1)).findByName(meetingRoomRequest.name());
-            verify(meetingRoomRepository, times(1)).save(any(MeetingRoom.class));
+            verify(meetingRoomRepository).findById(meetingRoomFirst.getId());
+            verify(meetingRoomRepository).findByName(meetingRoomRequest.name());
+            verify(meetingRoomRepository).save(any(MeetingRoom.class));
         }
     }
 
@@ -295,7 +290,7 @@ public class MeetingRoomServiceImplTest {
                     .extracting("meetingRoomId")
                     .isEqualTo(nonExistingMeetingRoomId);
 
-            verify(meetingRoomRepository, times(1)).findById(nonExistingMeetingRoomId);
+            verify(meetingRoomRepository).findById(nonExistingMeetingRoomId);
             verify(meetingRoomRepository, never()).delete(any(MeetingRoom.class));
         }
 
@@ -306,8 +301,8 @@ public class MeetingRoomServiceImplTest {
 
             assertThatNoException().isThrownBy(() -> meetingRoomService.deleteMeetingRoom(meetingRoomFirst.getId()));
 
-            verify(meetingRoomRepository, times(1)).findById(meetingRoomFirst.getId());
-            verify(meetingRoomRepository, times(1)).deleteById(meetingRoomFirst.getId());
+            verify(meetingRoomRepository).findById(meetingRoomFirst.getId());
+            verify(meetingRoomRepository).deleteById(meetingRoomFirst.getId());
         }
     }
 }
