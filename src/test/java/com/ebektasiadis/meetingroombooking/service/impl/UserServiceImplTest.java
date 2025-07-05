@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ebektasiadis.meetingroombooking.testutil.UserTestBuilder.aUser;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -44,17 +45,18 @@ public class UserServiceImplTest {
     void setUp() {
         nonExistingUserId = 999L;
 
-        userJohnDoe = new User();
-        userJohnDoe.setId(1L);
-        userJohnDoe.setUsername("john_doe");
-        userJohnDoe.setEmail("john@doe.com");
+        userJohnDoe = aUser()
+                .withId(1L)
+                .withUsername("john_doe")
+                .withEmail("john@doe.com")
+                .build();
 
-        userMarySmith = new User();
-        userMarySmith.setId(2L);
-        userMarySmith.setUsername("mary_smith");
-        userMarySmith.setEmail("mary@smith.com");
+        userMarySmith = aUser()
+                .withId(2L)
+                .withUsername("mary_smith")
+                .withEmail("mary@smith.com")
+                .build();
     }
-
 
     @Nested
     @DisplayName("deleteUser method")
@@ -145,10 +147,11 @@ public class UserServiceImplTest {
         @DisplayName("should return the updated user")
         void updateUser_existingUser_returnsUpdatedUser() {
             UserRequest userRequest = new UserRequest("samuelSerif", "samuel@serif.com");
-            User updatedUser = new User();
-            updatedUser.setId(userJohnDoe.getId());
-            updatedUser.setUsername(userRequest.username());
-            updatedUser.setEmail(userRequest.email());
+            User updatedUser = aUser()
+                    .withId(userJohnDoe.getId())
+                    .withUsername(userRequest.username())
+                    .withEmail(userRequest.email())
+                    .build();
 
             when(userRepository.findById(userJohnDoe.getId())).thenReturn(Optional.of(userJohnDoe));
             when(userRepository.findByEmail(userRequest.email())).thenReturn(Optional.empty());
@@ -172,10 +175,11 @@ public class UserServiceImplTest {
         @DisplayName("should return the updated user when username remains the same")
         void updateUser_existingUserSameUsername_returnsUpdatedUser() {
             UserRequest userRequest = new UserRequest(userJohnDoe.getUsername(), "samuel@serif.com");
-            User updatedUser = new User();
-            updatedUser.setId(userJohnDoe.getId());
-            updatedUser.setUsername(userRequest.username());
-            updatedUser.setEmail(userRequest.email());
+            User updatedUser = aUser()
+                    .withId(userJohnDoe.getId())
+                    .withUsername(userRequest.username())
+                    .withEmail(userRequest.email())
+                    .build();
 
             when(userRepository.findById(userJohnDoe.getId())).thenReturn(Optional.of(userJohnDoe));
             when(userRepository.findByEmail(userRequest.email())).thenReturn(Optional.empty());
@@ -198,10 +202,11 @@ public class UserServiceImplTest {
         @DisplayName("should return the updated user when email remains the same")
         void updateUser_existingUserSameEmail_returnsUpdatedUser() {
             UserRequest userRequest = new UserRequest("samuelSerif", userJohnDoe.getEmail());
-            User updatedUser = new User();
-            updatedUser.setId(userJohnDoe.getId());
-            updatedUser.setUsername(userRequest.username());
-            updatedUser.setEmail(userRequest.email());
+            User updatedUser = aUser()
+                    .withId(userJohnDoe.getId())
+                    .withUsername(userRequest.username())
+                    .withEmail(userRequest.email())
+                    .build();
 
             when(userRepository.findById(userJohnDoe.getId())).thenReturn(Optional.of(userJohnDoe));
             when(userRepository.findByUsername(userRequest.username())).thenReturn(Optional.empty());

@@ -35,6 +35,8 @@ Boot and gain hands-on experience building a backend from scratch.
 * Followed **RFC 9457** for structured error responses
 * Practiced the **DRY principle** across controllers and services
 * Used **Docker Compose** to spin up a PostgreSQL instance instead of using an in-memory DB
+* Used **Test Data Builder** pattern for my tests (inspired by [this](https://www.arhohuttunen.com/test-data-builders/)
+  article)
 
 ## 🚧 Additions / Future improvements
 
