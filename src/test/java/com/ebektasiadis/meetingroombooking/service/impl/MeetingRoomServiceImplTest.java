@@ -109,7 +109,7 @@ public class MeetingRoomServiceImplTest {
             assertThat(meetingRoomResponses).isNotNull();
             assertThat(meetingRoomResponses.size()).isEqualTo(meetingRooms.size());
             assertThat(meetingRoomResponses)
-                    .extracting("id", "name")
+                    .extracting(MeetingRoomResponse::id, MeetingRoomResponse::name)
                     .contains(tuple(meetingRoomFirst.getId(), meetingRoomFirst.getName()))
                     .contains(tuple(meetingRoomSecond.getId(), meetingRoomSecond.getName()));
 

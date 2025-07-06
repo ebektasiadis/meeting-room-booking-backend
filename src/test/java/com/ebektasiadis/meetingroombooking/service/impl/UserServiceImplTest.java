@@ -309,9 +309,9 @@ public class UserServiceImplTest {
             assertThat(userResponses).isNotNull();
             assertThat(userResponses).hasSize(users.size());
             assertThat(userResponses)
-                    .extracting("id", "username")
-                    .contains(tuple(userJohnDoe.getId(), userJohnDoe.getUsername()))
-                    .contains(tuple(userMarySmith.getId(), userMarySmith.getUsername()));
+                    .extracting(UserResponse::id, UserResponse::username, UserResponse::email)
+                    .contains(tuple(userJohnDoe.getId(), userJohnDoe.getUsername(), userJohnDoe.getEmail()))
+                    .contains(tuple(userMarySmith.getId(), userMarySmith.getUsername(), userMarySmith.getEmail()));
 
             verify(userRepository, times((1))).findAll();
         }
