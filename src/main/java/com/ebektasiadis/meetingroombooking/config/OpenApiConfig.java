@@ -1,30 +1,32 @@
 package com.ebektasiadis.meetingroombooking.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Contact;
-import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 
 @Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Meeting Room Booking API",
+                description = "Create and manage users, meetings rooms and their bookings through this API.",
+                version = "1.0",
+                contact = @Contact(
+                        name = "Efstratios Bektasiadis",
+                        email = "ebektasiadis@gmail.com",
+                        url = "https://ebektasiadis.dev"
+                )
+        )
+)
 public class OpenApiConfig {
-
     @Bean
-    public OpenAPI openAPI(Environment environment) {
-
-        return new OpenAPI()
-                .info(
-                        new Info()
-                                .title("Meeting Room Booking API")
-                                .description("Create and manage users, meetings rooms and their bookings through this API.")
-                                .version("1.0")
-                                .contact(
-                                        new Contact()
-                                                .url("https://ebektasiadis.dev")
-                                                .name("Efstratios Bektasiadis")
-                                                .email("ebektasiadis@gmail.com")
-                                )
-                );
+    public GroupedOpenApi v1() {
+        return GroupedOpenApi
+                .builder()
+                .group("v1")
+                .pathsToMatch("/api/v1/**")
+                .build();
     }
 }
