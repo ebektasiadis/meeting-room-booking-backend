@@ -1,7 +1,7 @@
 package com.ebektasiadis.meetingroombooking.exception.booking;
 
-import com.ebektasiadis.meetingroombooking.constants.ProblemTypes;
 import com.ebektasiadis.meetingroombooking.exception.common.AbstractApiException;
+import com.ebektasiadis.meetingroombooking.exception.common.ResponseProblemDetail;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,14 +12,13 @@ import java.util.Map;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseProblemDetail(type = "booking-past-start-date", title = "The start date cannot be in the past.")
 public class BookingPastStartDateException extends AbstractApiException {
     private final LocalDateTime startDate;
 
     public BookingPastStartDateException(LocalDateTime startDate) {
         super(
-                String.format("The selected start date (%s) is in the past.", startDate),
-                "The start date cannot be in the past.",
-                ProblemTypes.BOOKING_PAST_START_DATE_ERROR
+                String.format("The selected start date (%s) is in the past.", startDate)
         );
 
         this.startDate = startDate;

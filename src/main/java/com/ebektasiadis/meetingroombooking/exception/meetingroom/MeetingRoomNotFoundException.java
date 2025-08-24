@@ -1,7 +1,7 @@
 package com.ebektasiadis.meetingroombooking.exception.meetingroom;
 
-import com.ebektasiadis.meetingroombooking.constants.ProblemTypes;
 import com.ebektasiadis.meetingroombooking.exception.common.AbstractApiException;
+import com.ebektasiadis.meetingroombooking.exception.common.ResponseProblemDetail;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -11,14 +11,14 @@ import java.util.Map;
 
 @Getter
 @ResponseStatus(HttpStatus.NOT_FOUND)
+@ResponseProblemDetail(type = "meeting-room-not-found", title = "Meeting Room not found.")
 public class MeetingRoomNotFoundException extends AbstractApiException {
     private final Long meetingRoomId;
 
     public MeetingRoomNotFoundException(Long meetingRoomId) {
         super(
-                String.format("Meeting room with id %d couldn't be found.", meetingRoomId),
-                "Meeting Room not found.",
-                ProblemTypes.MEETING_ROOM_NOT_FOUND_ERROR
+                String.format("Meeting room with id %d couldn't be found.", meetingRoomId)
+
         );
 
         this.meetingRoomId = meetingRoomId;

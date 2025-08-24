@@ -1,6 +1,5 @@
 package com.ebektasiadis.meetingroombooking.exception.common;
 
-import com.ebektasiadis.meetingroombooking.constants.ProblemTypes;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -24,7 +23,7 @@ public class GlobalExceptionHandler {
         ex.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
         ProblemDetail problemDetail = ProblemDetail.forStatus(ex.getStatusCode());
-        problemDetail.setType(URI.create(String.format("/problems/%s", ProblemTypes.VALIDATION_ERROR)));
+        problemDetail.setType(URI.create("/problems/validation-error"));
         problemDetail.setTitle("Some fields are missing or are invalid.");
         problemDetail.setDetail(String.format("There are %d field(s) that are missing or are invalid.", errors.size()));
         problemDetail.setProperty("extensions", Map.of("fields", errors));
@@ -33,13 +32,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AbstractApiException.class)
-    public ResponseEntity<ProblemDetail> handleAbstractApiException(AbstractApiException ex) {
+    public ResponseEntity<ProblemDetail> handleAbstractApiException(AbstractApiException ex) throws NoSuchMethodException {
         ResponseStatus responseStatusAnnotation = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
-        HttpStatus status = (responseStatusAnnotation != null) ? responseStatusAnnotation.value() : HttpStatus.INTERNAL_SERVER_ERROR;
+        ResponseProblemDetail responseProblemDetailAnnotation = AnnotationUtils.findAnnotation(ex.getClass(), ResponseProblemDetail.class);
+
+        HttpStatus status = (responseStatusAnnotation != null) ? responseStatusAnnotation.value() : (HttpStatus) ResponseStatus.class.getMethod("value").getDefaultValue();
+        String title = (responseProblemDetailAnnotation != null) ? responseProblemDetailAnnotation.title() : ResponseProblemDetail.class.getMethod("title").getDefaultValue().toString();
+        URI type = URI.create("/problems/" + ((responseProblemDetailAnnotation != null) ? responseProblemDetailAnnotation.type() : ResponseProblemDetail.class.getMethod("type").getDefaultValue().toString()));
 
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, ex.getMessage());
-        problemDetail.setTitle(ex.getTitle());
-        problemDetail.setType(ex.getType());
+        problemDetail.setTitle(title);
+        problemDetail.setType(type);
         problemDetail.setProperty("extensions", ex.getProblemDetailProperties());
 
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
@@ -48,7 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleException(Exception ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        problemDetail.setType(URI.create(String.format("/problems/%s", ProblemTypes.INTERNAL_ERROR)));
+        problemDetail.setType(URI.create("/problems/internal-error"));
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 }

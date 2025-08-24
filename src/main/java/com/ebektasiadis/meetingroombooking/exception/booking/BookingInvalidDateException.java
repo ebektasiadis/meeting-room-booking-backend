@@ -1,7 +1,7 @@
 package com.ebektasiadis.meetingroombooking.exception.booking;
 
-import com.ebektasiadis.meetingroombooking.constants.ProblemTypes;
 import com.ebektasiadis.meetingroombooking.exception.common.AbstractApiException;
+import com.ebektasiadis.meetingroombooking.exception.common.ResponseProblemDetail;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,15 +12,14 @@ import java.util.Map;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseProblemDetail(type = "booking-invalid-date", title = "End time should be before start time.")
 public class BookingInvalidDateException extends AbstractApiException {
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
 
     public BookingInvalidDateException(LocalDateTime startTime, LocalDateTime endTime) {
         super(
-                String.format("%s is after your start time, which is %s.", endTime, startTime),
-                "End time should be before start time.",
-                ProblemTypes.BOOKING_INVALID_DATE_ERROR
+                String.format("%s is after your start time, which is %s.", endTime, startTime)
         );
 
         this.startTime = startTime;
