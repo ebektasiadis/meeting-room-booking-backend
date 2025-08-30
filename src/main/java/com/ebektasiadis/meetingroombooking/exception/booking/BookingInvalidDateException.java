@@ -1,18 +1,25 @@
 package com.ebektasiadis.meetingroombooking.exception.booking;
 
 import com.ebektasiadis.meetingroombooking.exception.common.AbstractApiException;
+import com.ebektasiadis.meetingroombooking.exception.common.Extension;
 import com.ebektasiadis.meetingroombooking.exception.common.ResponseProblemDetail;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 @Getter
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-@ResponseProblemDetail(type = "booking-invalid-date", title = "End time should be before start time.")
+@ResponseProblemDetail(
+        status = HttpStatus.BAD_REQUEST,
+        type = "booking-invalid-date",
+        title = "End time should be before start time.",
+        extensions = {
+                @Extension(name = "startTime", type = LocalDateTime.class),
+                @Extension(name = "endTime", type = LocalDateTime.class),
+        }
+)
 public class BookingInvalidDateException extends AbstractApiException {
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;

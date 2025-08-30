@@ -17,5 +17,5 @@ public interface UserService {
 
     public UserResponse updateUser(Long id, UserRequest userRequest) throws UserNotFoundException, UserEmailExistsException, UserUsernameExistsException;
 
-    public void deleteUser(Long id);
+    public void deleteUser(Long id) throws UserNotFoundException;
 }

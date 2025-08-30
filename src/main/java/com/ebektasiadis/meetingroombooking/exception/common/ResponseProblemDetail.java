@@ -1,5 +1,7 @@
 package com.ebektasiadis.meetingroombooking.exception.common;
 
+import org.springframework.http.HttpStatus;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,4 +13,8 @@ public @interface ResponseProblemDetail {
     String type() default "unknown-problem-detail-type";
 
     String title() default "Unknown problem detail title.";
+
+    HttpStatus status() default HttpStatus.BAD_REQUEST;
+
+    Extension[] extensions() default {};
 }
